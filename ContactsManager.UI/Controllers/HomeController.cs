@@ -1,32 +1,21 @@
-using ContactsManager.UI.Models;
+﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
-namespace ContactsManager.UI.Controllers
+namespace CRUDExample.Controllers;
+
+[Route("[controller]")]
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    [Route("[action]")]
+    public IActionResult Error()
     {
-        private readonly ILogger<HomeController> _logger;
+        IExceptionHandlerPathFeature? exceptionHandlerPathFeature =
+            HttpContext.Features.Get<IExceptionHandlerPathFeature>();
 
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+        if (exceptionHandlerPathFeature != null &&
+            exceptionHandlerPathFeature.Error != null)
+            ViewBag.ErrorMessage = exceptionHandlerPathFeature.Error.Message;
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        return View();
     }
 }
