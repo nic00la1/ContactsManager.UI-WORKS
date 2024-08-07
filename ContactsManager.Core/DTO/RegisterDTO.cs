@@ -27,5 +27,7 @@ public class RegisterDTO
 
     [Required]
     [DataType(DataType.Password)]
+    [Compare("Password",
+        ErrorMessage = "Password and confirm password don't match!")]
     public string ConfirmPassword { get; set; }
 }

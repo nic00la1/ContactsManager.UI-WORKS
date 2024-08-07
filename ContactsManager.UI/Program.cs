@@ -47,6 +47,8 @@ if (!builder.Environment.IsEnvironment("Test"))
     Rotativa.AspNetCore.RotativaConfiguration.Setup("wwwroot", "Rotativa");
 
 app.UseStaticFiles();
+
+app.UseAuthentication();
 app.UseRouting();
 app.MapControllers();
 

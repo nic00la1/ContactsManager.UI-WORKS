@@ -10,10 +10,14 @@ namespace ContactsManager.UI.Controllers;
 public class AccountController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
 
-    public AccountController(UserManager<ApplicationUser> userManager)
+    public AccountController(UserManager<ApplicationUser> userManager,
+                             SignInManager<ApplicationUser> signInManager
+    )
     {
         _userManager = userManager;
+        _signInManager = signInManager;
     }
 
     [HttpGet]
@@ -45,8 +49,12 @@ public class AccountController : Controller
             await _userManager.CreateAsync(user, registerDto.Password);
 
         if (result.Succeeded)
+        {
+            // Sign in
+            await _signInManager.SignInAsync(user, false);
+
             return RedirectToAction(nameof(PersonsController.Index), "Persons");
-        else
+        } else
             foreach (IdentityError error in result.Errors)
                 ModelState.AddModelError("Register", error.Description);
 
