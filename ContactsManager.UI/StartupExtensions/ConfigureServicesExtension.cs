@@ -1,6 +1,9 @@
-﻿using CRUDExample.Filters.ActionFilters;
+﻿using ContactsManager.Core.Domain.IdentityEntities;
+using CRUDExample.Filters.ActionFilters;
 using Entities;
 using Microsoft.AspNetCore.HttpLogging;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Repositories;
 using RepositoryContracts;
@@ -53,15 +56,6 @@ public static class ConfigureServicesExtension
         services.AddScoped<IPersonsUpdaterService, PersonsUpdaterService>();
         services.AddScoped<IPersonsDeleterService, PersonsDeleterService>();
 
-
-// Add HTTP logging services
-        services.AddHttpLogging(options =>
-        {
-            // Configure logging options if needed
-            options.LoggingFields = HttpLoggingFields.RequestProperties |
-                HttpLoggingFields.ResponsePropertiesAndHeaders;
-        });
-
 // Conditionally register the DbContext based on the environment
         if (environment.IsEnvironment("Test"))
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -78,6 +72,21 @@ public static class ConfigureServicesExtension
 
         services.AddTransient<PersonsListActionFilter>();
 
+        services.AddIdentity<ApplicationUser, ApplicationRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders()
+            .AddUserStore<UserStore<ApplicationUser, ApplicationRole,
+                ApplicationDbContext, Guid>>()
+            .AddRoleStore<
+                RoleStore<ApplicationRole, ApplicationDbContext, Guid>>();
+
+        // Add HTTP logging services
+        services.AddHttpLogging(options =>
+        {
+            // Configure logging options if needed
+            options.LoggingFields = HttpLoggingFields.RequestProperties |
+                HttpLoggingFields.ResponsePropertiesAndHeaders;
+        });
         return services;
     }
 }
