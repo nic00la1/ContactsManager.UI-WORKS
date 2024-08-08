@@ -32,14 +32,17 @@ builder.Services.ConfigureServices(builder.Configuration, builder.Environment);
 
 WebApplication app = builder.Build();
 
-app.UseSerilogRequestLogging();
-
 if (builder.Environment.IsDevelopment()) app.UseDeveloperExceptionPage();
 else
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseExceptionHandlingMiddleware();
 }
+
+app.UseHsts();
+app.UseHttpsRedirection();
+
+app.UseSerilogRequestLogging();
 
 app.UseHttpLogging();
 
