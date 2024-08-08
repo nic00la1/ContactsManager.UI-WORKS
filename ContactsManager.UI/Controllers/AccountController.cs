@@ -51,7 +51,7 @@ public class AccountController : Controller
         if (result.Succeeded)
         {
             // Sign in
-            await _signInManager.SignInAsync(user, false);
+            await _signInManager.SignInAsync(user, true);
 
             return RedirectToAction(nameof(PersonsController.Index), "Persons");
         } else
