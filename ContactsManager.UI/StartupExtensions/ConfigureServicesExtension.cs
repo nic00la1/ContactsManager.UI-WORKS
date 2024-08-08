@@ -1,6 +1,7 @@
 ﻿using ContactsManager.Core.Domain.IdentityEntities;
 using CRUDExample.Filters.ActionFilters;
 using Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -56,7 +57,9 @@ public static class ConfigureServicesExtension
         services.AddScoped<IPersonsUpdaterService, PersonsUpdaterService>();
         services.AddScoped<IPersonsDeleterService, PersonsDeleterService>();
 
-// Conditionally register the DbContext based on the environment
+        services.AddTransient<PersonsListActionFilter>();
+
+        // Conditionally register the DbContext based on the environment
         if (environment.IsEnvironment("Test"))
             services.AddDbContext<ApplicationDbContext>(options =>
             {
@@ -69,8 +72,6 @@ public static class ConfigureServicesExtension
                     configuration.GetConnectionString(
                         "DefaultConnection"));
             });
-
-        services.AddTransient<PersonsListActionFilter>();
 
         services.AddIdentity<ApplicationUser, ApplicationRole>((options) =>
             {
@@ -87,6 +88,18 @@ public static class ConfigureServicesExtension
                 ApplicationDbContext, Guid>>()
             .AddRoleStore<
                 RoleStore<ApplicationRole, ApplicationDbContext, Guid>>();
+
+
+        services.AddAuthorization(options =>
+        {
+            options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser().Build();
+        });
+
+        services.ConfigureApplicationCookie(options =>
+        {
+            options.LoginPath = "/Account/Login";
+        });
 
         // Add HTTP logging services
         services.AddHttpLogging(options =>
