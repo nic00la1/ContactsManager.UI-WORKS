@@ -3,6 +3,7 @@ using ContactsManager.Core.DTO;
 using CRUDExample.Controllers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace ContactsManager.UI.Controllers;
 
@@ -59,5 +60,38 @@ public class AccountController : Controller
                 ModelState.AddModelError("Register", error.Description);
 
         return View(registerDto);
+    }
+
+    [HttpGet]
+    public IActionResult Login()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Login(LoginDTO loginDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            ViewBag.Errors = ModelState.Values.SelectMany(e => e.Errors)
+                .Select(t => t.ErrorMessage);
+            return View(loginDto);
+        }
+
+        SignInResult result = await _signInManager.PasswordSignInAsync(
+            loginDto.Email, loginDto.Password, false, false);
+
+        if (result.Succeeded)
+            return RedirectToAction(nameof(PersonsController.Index), "Persons");
+
+        ModelState.AddModelError("Login", "Invalid email or password.");
+
+        return View(loginDto);
+    }
+
+    public async Task<IActionResult> Logout()
+    {
+        await _signInManager.SignOutAsync();
+        return RedirectToAction(nameof(Login));
     }
 }
