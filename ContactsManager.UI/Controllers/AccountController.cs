@@ -71,7 +71,7 @@ public class AccountController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Login(LoginDTO loginDto)
+    public async Task<IActionResult> Login(LoginDTO loginDto, string? ReturnUrl)
     {
         if (!ModelState.IsValid)
         {
@@ -84,7 +84,9 @@ public class AccountController : Controller
             loginDto.Email, loginDto.Password, false, false);
 
         if (result.Succeeded)
-            return RedirectToAction(nameof(PersonsController.Index), "Persons");
+            if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
+                return LocalRedirect(ReturnUrl);
+        return RedirectToAction(nameof(PersonsController.Index), "Persons");
 
         ModelState.AddModelError("Login", "Invalid email or password.");
 
