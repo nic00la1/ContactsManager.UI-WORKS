@@ -53,6 +53,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapControllerRoute("default", "{controller}/{action}/{id?}");
+//});
 app.Run();
 
 public partial class Program
