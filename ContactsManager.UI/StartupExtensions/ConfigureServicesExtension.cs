@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Repositories;
 using RepositoryContracts;
@@ -36,6 +37,8 @@ public static class ConfigureServicesExtension
                 Value = "My-Value-From-Global",
                 Order = 2
             });
+
+            options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
         });
 
 // Add services into IoC container

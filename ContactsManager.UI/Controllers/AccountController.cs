@@ -35,6 +35,7 @@ public class AccountController : Controller
 
     [HttpPost]
     [Authorize("NotAuthorized")]
+    // [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(RegisterDTO registerDto)
     {
         // Check for validation errors
@@ -156,6 +157,7 @@ public class AccountController : Controller
         return RedirectToAction(nameof(Login));
     }
 
+    [AllowAnonymous]
     public async Task<IActionResult> IsEmailAlreadyRegistered(string email)
     {
         ApplicationUser user = await _userManager.FindByEmailAsync(email);
